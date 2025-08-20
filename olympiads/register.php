@@ -4,7 +4,12 @@ global $CFG, $DB, $PAGE, $OUTPUT, $USER;
 
 require_login();
 
-$olympiadid = required_param('id', PARAM_INT);
+// Получаем ID олимпиады из параметра
+$olympiadid = optional_param('id', 0, PARAM_INT);
+if (!$olympiadid) {
+    throw new moodle_exception('missingparam', 'error', '', 'id');
+}
+
 $context = context_system::instance();
 
 // Получаем данные об олимпиаде
@@ -50,7 +55,8 @@ $template_data = [
     'registration_closed' => $now > $olympiad->enddate,
     'time_not_come' => $now < $olympiad->startdate,
     'sesskey' => sesskey(),
-    'back_url' => new moodle_url('/my/')
+    'back_url' => new moodle_url('/my/'),
+    'config' => ['wwwroot' => $CFG->wwwroot]
 ];
 
 echo $OUTPUT->header();

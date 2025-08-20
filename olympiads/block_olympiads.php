@@ -63,7 +63,8 @@ class block_olympiads extends block_base {
         // Рендерим шаблон
         $data = [
             'olympiads' => $template_data,
-            'sesskey' => sesskey()
+            'sesskey' => sesskey(),
+            'config' => ['wwwroot' => $CFG->wwwroot] // Добавьте эту строку
         ];
 
         $this->content->text .= $OUTPUT->render_from_template('block_olympiads/olympiads_list', $data);

@@ -1,0 +1,42 @@
+<div class="block-olympiads-register">
+    <div class="alert alert-info">
+        <h4>Запись на олимпиаду: {{name}}</h4>
+        <p>{{{description}}}</p>
+        <p><strong>Период регистрации:</strong> {{#userdate}}{{startdate}}, %d %B %Y %H:%M{{/userdate}} -
+        {{#userdate}}{{enddate}}, %d %B %Y %H:%M{{/userdate}}</p>
+    </div>
+
+    {{#can_register}}
+    <form id="olympiad-register-form">
+        <input type="hidden" name="olympiadid" value="{{id}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+
+        <div class="mb-3">
+            <label class="form-label">Подтвердите запись на олимпиаду</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="confirm" id="confirm-register" required>
+                <label class="form-check-label" for="confirm-register">
+                    Я подтверждаю запись на олимпиаду "{{name}}"
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Подтвердить запись</button>
+        <a href="{{back_url}}" class="btn btn-secondary">Назад</a>
+    </form>
+    {{/can_register}}
+
+    {{^can_register}}
+    <div class="alert alert-warning">
+        {{#already_registered}}
+        Вы уже записаны на эту олимпиаду.
+        {{/already_registered}}
+        {{#registration_closed}}
+        Регистрация на эту олимпиаду закрыта.
+        {{/registration_closed}}
+        {{#time_not_come}}
+        Регистрация начнется {{#userdate}}{{startdate}}, %d %B %Y %H:%M{{/userdate}}
+        {{/time_not_come}}
+    </div>
+    {{/can_register}}
+</div>

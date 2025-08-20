@@ -1,0 +1,81 @@
+<div class="block-olympiads-list">
+    <h3>Доступные олимпиады</h3>
+
+    {{#olympiads}}
+    <div class="olympiad-item card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{name}}</h5>
+            <div class="card-text">
+                {{{description}}}
+            </div>
+            <div class="olympiad-dates">
+                <small class="text-muted">
+                    Регистрация: {{#userdate}}{{startdate}}, %d %B %Y{{/userdate}} -
+                    {{#userdate}}{{enddate}}, %d %B %Y{{/userdate}}
+                </small>
+            </div>
+
+            {{#can_register}}
+            <div class="mt-3">
+                <button class="btn btn-primary btn-sm register-btn"
+                        data-olympiadid="{{id}}"
+                        data-action="register">
+                    Записаться на олимпиаду
+                </button>
+            </div>
+            {{/can_register}}
+
+            {{#already_registered}}
+            <div class="mt-3">
+                <span class="badge bg-success">Вы записаны</span>
+                <button class="btn btn-outline-danger btn-sm unregister-btn"
+                        data-olympiadid="{{id}}"
+                        data-action="unregister">
+                    Отменить запись
+                </button>
+            </div>
+            {{/already_registered}}
+
+            {{#registration_closed}}
+            <div class="mt-3">
+                <span class="badge bg-secondary">Регистрация закрыта</span>
+            </div>
+            {{/registration_closed}}
+        </div>
+    </div>
+    {{/olympiads}}
+
+    {{^olympiads}}
+    <div class="alert alert-info">
+        На данный момент нет доступных олимпиад.
+    </div>
+    {{/olympiads}}
+</div>
+
+{{#js}}
+require(['jquery'], function($) {
+    $('.register-btn, .unregister-btn').on('click', function(e) {
+        e.preventDefault();
+
+        var button = $(this);
+        var olympiadId = button.data('olympiadid');
+        var action = button.data('action');
+
+        if (action === 'register') {
+            window.location.href = M.cfg.wwwroot + '/blocks/olympiads/register.php?id=' + olympiadId;
+        } else if (action === 'unregister' && confirm('Вы уверены, что хотите отменить запись?')) {
+            $.post(M.cfg.wwwroot + '/blocks/olympiads/ajax.php', {
+                action: 'unregister',
+                olympiadid: olympiadId,
+                sesskey: M.cfg.sesskey
+            }, function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('Ошибка: ' + response.error);
+                }
+            });
+        }
+    });
+});
+{{/js}}
